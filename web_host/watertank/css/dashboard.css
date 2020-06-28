@@ -1,0 +1,26 @@
+
+#box_outer{
+    border:0px solid grey;
+    width:100%;
+}
+#box_top{
+    border:1px solid lightgray;
+    width:98%;float: left;
+    margin:0.2%;
+}
+#box_rt{
+    padding: 1%;
+    border:0px solid blue;
+    width:35%;
+    float: left;
+    margin:0.2%;
+}
+#box_lt{
+    border:1px solid lightgrey;
+	padding:1%;
+    width:20%;
+    float: left;
+    margin-right:0.2%;
+    margin-top:1%;
+}
+   
