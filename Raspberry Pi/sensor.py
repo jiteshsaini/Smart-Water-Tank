@@ -106,8 +106,7 @@ if (distance <10 or distance >120): #don't send erroneous readings to remote ser
 	log_error(distance)
 else:
 	sendData_to_remoteServer(url_remote,distance)
-
-#low_level_warning(distance)
+	low_level_warning(distance)
 
 print ("---------------------")
 	
