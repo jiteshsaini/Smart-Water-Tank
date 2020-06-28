@@ -22,8 +22,7 @@ display_data();
 
 
 function display_data(){
-    
-    //$uri = \Drupal::request()->getRequestUri();
+	
     $uri= $_SERVER['REQUEST_URI'];    
    // echo"uri: $uri<br>";
     
@@ -161,9 +160,4 @@ function show_dates(){
 
 //=========================================================================================
 
-
-/* New way of accessing URL in Drupal 8
-$uri = \Drupal::request()->getRequestUri();
-$uri_without_query_string = \Drupal::request()->getPathInfo();
-*/
 ?>
