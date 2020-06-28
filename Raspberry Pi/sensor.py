@@ -80,16 +80,6 @@ def low_level_warning(dist):
 	else:
 		GPIO.output(ALARM, True)
 		print("level ok")
-
-def log_error(distance):
-	local_path=os.path.dirname(os.path.realpath(__file__))
-	print (local_path)
-	f1 = open(local_path + "/error.txt", "a+")
-	now = datetime.datetime.now()
-	time_now= str(now.day) + "-" +  str(now.month) + "-" +  str(now.year) + " (" + str(now.hour) + ":" +  str(now.minute) + ":" +  str(now.second) + ")"
-	str1=time_now + ': ' +str(distance) + '\n'
-	f1.write(str1)
-	f1.close()
 		
 from urllib.request import urlopen
 
@@ -102,11 +92,9 @@ distance=get_distance()
 
 print ("distance: ", distance)
 
-if (distance <10 or distance >120): #don't send erroneous readings to remote server
-	log_error(distance)
-else:
-	sendData_to_remoteServer(url_remote,distance)
-	low_level_warning(distance)
+sendData_to_remoteServer(url_remote,distance)
+
+low_level_warning(distance)
 
 print ("---------------------")
 	
