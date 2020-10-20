@@ -1,4 +1,12 @@
 # Smart Water Tank with online monitoring dashboard (Web GUI)
+<p align="left">
+Live Demo: <a href='https://helloworld.co.in/water-tank' target='_blank'>
+   <img src='https://github.com/jiteshsaini/earthrover1/blob/master/img/logo3.gif' height='40px'>
+</a> Watch the video on Yotube: 
+<a href='https://youtu.be/7uLuwq3Zd_M' target='_blank'>
+   <img src='https://github.com/jiteshsaini/earthrover1/blob/master/img/btn_youtube.png' height='40px'>
+</a>
+</p>
 
 This is an IOT project implemented using Raspberry Pi and custom Web Application. 
 
