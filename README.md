@@ -8,7 +8,7 @@ As shown in the animation below, an ultrasonic sensor is fitted on top of the wa
    <img src="https://helloworld.co.in/deploy/images/watertank_overview.gif">
 </p>
 
-# How to use the code
+## How to use the code
 
 **web_host**
 1. This directory contains the code of Dashboard (Web GUI). It is required to be placed inside the public directory ("htdocs" or "www") of your webserver.
