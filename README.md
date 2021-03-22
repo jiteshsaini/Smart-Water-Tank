@@ -1,10 +1,10 @@
 # Smart Water Tank with online monitoring dashboard (Web GUI)
 <p align="left">
 Live Demo: <a href='https://helloworld.co.in/water-tank' target='_blank'>
-   <img src='https://github.com/jiteshsaini/earthrover1/blob/master/img/logo3.gif' height='40px'>
+   <img src='https://github.com/jiteshsaini/files/blob/main/img/logo3.gif' height='40px'>
 </a> Watch the video on Yotube: 
 <a href='https://youtu.be/7uLuwq3Zd_M' target='_blank'>
-   <img src='https://github.com/jiteshsaini/earthrover1/blob/master/img/btn_youtube.png' height='40px'>
+   <img src='https://github.com/jiteshsaini/files/blob/main/img/btn_youtube.png' height='40px'>
 </a>
 </p>
 
@@ -13,7 +13,7 @@ This is an IOT project implemented using Raspberry Pi and custom Web Application
 As shown in the animation below, an ultrasonic sensor is fitted on top of the water tank. The sensor is connected to Raspberry Pi, which measures water level in the tank every minute. The water level reading is fed to a remote database. A Web Application running in the remote host makes use of this data to update the water level animation and the thin bar line graph.
 
 <p align="center">
-   <img src="https://helloworld.co.in/deploy/images/watertank_overview.gif">
+   <img src="https://helloworld.co.in/custom_php/img/watertank_overview.gif">
 </p>
 
 ## How to use the code
