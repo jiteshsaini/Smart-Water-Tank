@@ -32,5 +32,5 @@ You can install a Webserver such as XAMPP on your PC or Laptop and place 'web_ho
 
 2. Edit the Web Server IP address in line 89 of 'sensor.py' as per your device.<br>
 
-3. Run file 'sensor.py' using python3.<br>
+3. Create a cron job which runs the file 'sensor.py' every minute. So that the reading is sent to the Web server every minute.<br>
 
