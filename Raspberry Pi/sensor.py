@@ -1,12 +1,13 @@
 #Project: Smart Water Tank
 #Created by: Jitesh Saini
 
-#this script is executed every minute through CRON settings of Raspberry Pi
+#this script should be executed every minute through CRON settings of Raspberry Pi
+
 import RPi.GPIO as GPIO
 import time,os
 
 import datetime
-
+from urllib import urlopen
 
 TRIG = 6
 ECHO = 5
@@ -81,8 +82,6 @@ def low_level_warning(dist):
 		GPIO.output(ALARM, True)
 		print("level ok")
 		
-from urllib.request import urlopen
-
 passcode="xyz"
 
 #Assuming web server is running on IP Address: 192.168.1.3
