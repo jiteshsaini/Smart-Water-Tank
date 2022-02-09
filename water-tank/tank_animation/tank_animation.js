@@ -1,6 +1,5 @@
 FusionCharts.ready(function(){
-   
-var chartObj = new FusionCharts({
+			var chartObj = new FusionCharts({
     type: 'cylinder',
     dataFormat: 'json',
     renderAt: 'chart-container',
@@ -12,23 +11,23 @@ var chartObj = new FusionCharts({
             "caption": "",
             "subcaption": "",
             "lowerLimit": "0",
-            "upperLimit": "70",
+            "upperLimit": "800",
             "lowerLimitDisplay": "Empty",
             "upperLimitDisplay": "Full",
-            "numberSuffix": "",
+            "numberSuffix": " ltrs",
             "showValue": "1",
             "chartBottomMargin": "45",
             "showValue": "0",
-			"dataStreamUrl": "/web_host/watertank_simulation/read_data_simulation.php?widget=tank_animation",
+			"dataStreamUrl": "read_data2.php",
 			"refreshInterval": "1",
 			"refreshInstantly": "1",
-			"cylFillColor": "#fff25e",
+			"cylFillColor": "#35d1fd",
 			"cyloriginx": "125",
 			"cyloriginy": "270",
 			"cylradius": "120",
 			"cylheight": "250"
         },
-        "value": "70",
+        "value": "700",
         "annotations": {
             "origw": "400",
             "origh": "290",
@@ -42,7 +41,7 @@ var chartObj = new FusionCharts({
                     "y": "$chartEndY-40",
                     "tox": "$canvasCenterX +55",
                     "toy": "$chartEndY-80",
-                    "fillcolor": "#fff25e"
+                    "fillcolor": "#35d1fd"
                 }, {
                     "id": "rangeText",
                     "type": "Text",
@@ -58,27 +57,23 @@ var chartObj = new FusionCharts({
     },
     "events": {
         "rendered": function(evtObj, argObj) {
-            //35d1fc   blue color
-            //var fuelVolume = 110;
+           
             evtObj.sender.chartInterval = setInterval(function() {
-                //(fuelVolume < 10) ? (fuelVolume = 80) : "";
-                //var consVolume = fuelVolume - (Math.floor(Math.random() * 3));
-                //evtObj.sender.feedData && evtObj.sender.feedData("&value=" + consVolume);
-               // fuelVolume = consVolume;
 			    evtObj.sender.feedData && evtObj.sender.feedData("&value=");
             }, 2000);
         },
-        //Using real time update event to update the annotation
-        //showing available volume of Diesel
+        /* Using real time update event to update the annotation */
+        
+        //showing available volume in tank (setting colors as per available volume)
         "realTimeUpdateComplete": function(evt, arg) {
             var annotations = evt.sender.annotations,
                 dataVal = evt.sender.getData(),
-                colorVal = (dataVal >= 40) ? "#6caa03" : ((dataVal <= 20) ? "#e44b02" : "#f8bd1b");
-            //Updating value
+                colorVal = (dataVal >= 600) ? "#6caa03" : ((dataVal <= 300) ? "#e44b02" : "#f8bd1b");
+            //Updating the volume value
             annotations && annotations.update('rangeText', {
-                "text": dataVal + ""
+                "text": dataVal + " ltrs"
             });
-            //Changing background color as per value
+            //setting background color of annotation as per value
             annotations && annotations.update('rangeBg', {
                 "fillcolor": colorVal
             });

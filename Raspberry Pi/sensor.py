@@ -7,12 +7,12 @@ import RPi.GPIO as GPIO
 import time,os
 
 import datetime
-from urllib import urlopen
 
 TRIG = 6
 ECHO = 5
 ALARM = 23
 
+GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 
 GPIO.setup(TRIG,GPIO.OUT)
@@ -47,10 +47,6 @@ def get_distance():
 			distance = round(distance, 3)
 			print (x, "distance: ", distance)
 		
-			if(distance > 125):# ignore erroneous readings (max distance cannot be more than 125)
-				k=k+1
-				continue
-		
 			dist_add = dist_add + distance
 			#print "dist_add: ", dist_add
 			time.sleep(.1) # 100ms interval between readings
@@ -68,13 +64,19 @@ def get_distance():
 	#print ("dist: ", dist)
 	return dist
 
-def sendData_to_remoteServer(url,dist):
-	url_full=url+str(dist)
-	urlopen(url_full)
-	print("sent to url: ",url_full)
+def sendData_to_remoteServer(dist):
+	
+	#url_remote="https://helloworld.co.in/demo/water-tank/insert_data.php?dist=" + str(dist)
+	url_remote="http://192.168.1.5/water-tank/insert_data.php?dist=" + str(dist)
+	cmd="curl -s " + url_remote
+	result=os.popen(cmd).read()
+	print (cmd)
+	print (result)
+		
 	
 def low_level_warning(dist):
-	level=114-dist
+	tank_height=114 #set your tank height here
+	level=tank_height-dist
 	if(level<40):
 		print("level low : ", level)
 		GPIO.output(ALARM, False)
@@ -82,19 +84,18 @@ def low_level_warning(dist):
 		GPIO.output(ALARM, True)
 		print("level ok")
 		
-passcode="xyz"
 
-#Assuming web server is running on IP Address: 192.168.1.3
-url_remote="http://192.168.1.3/web_host/watertank/insert_data.php?passcode=" + passcode + "&level="
-
-distance=get_distance()
-
-print ("distance: ", distance)
-
-sendData_to_remoteServer(url_remote,distance)
-
-low_level_warning(distance)
-
-print ("---------------------")
+def main():
 	
-			
+	distance=get_distance()
+	distance=69.7
+	
+	print ("distance: ", distance)
+	sendData_to_remoteServer(distance)
+	low_level_warning(distance)
+	print ("---------------------")
+	
+	
+if __name__ == '__main__':
+    main()
+

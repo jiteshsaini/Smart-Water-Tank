@@ -1,28 +1,26 @@
 <?php
-/*
-* Project: Smart Water Tank
-* Created by: Jitesh Saini
-*/
-
+ini_set('display_errors', '1');
 require_once 'phplot.php';
+require_once '../util.php';
 
-//----------database access----------------------------
-require_once '../../util/db_query.php';
-require_once '../db_params_wt.php';
-//-----------------------------------------------------
-
-require_once '../util_functions_wt.php';
+$con=create_db_connection();
 
 $dt_graph=$_GET["date"];
 $sql="SELECT `date_time`, `level` FROM `level_log` where `date_time` like '%$dt_graph%' ORDER BY `date_time`";
-//echo"$sql<br>";
-$arr2d=db_select_all($sql);
-//print_2d_array($arr2d);
+$arr2d=db_select_all($con,$sql);
+
+
+if($arr2d!=null){
+  $sz=sizeof($arr2d);
+}
+else{
+  $sz=0;
+}
 
 /*
 * converting 2d array to associative array.  
 */
-for($i=0;$i<sizeof($arr2d);$i++)
+for($i=0;$i<$sz;$i++)
   {
     //echo"$data[$i]<br>";
 	$arr=$arr2d[$i];
@@ -56,10 +54,15 @@ for($i=0;$i<1440;$i++)
   } 
 
 /*
-* Not all 1440 data points are required to be plotted. This function selects the samples from the $ass_array_padded 
+* We can plot all 1440 data points or we can take some fraction of it.
+This function selects the samples from the $ass_array_padded as per the value of variable $sample
+for e.g. 
+if $sample = 1 ,then all 1440 values are plotted
+if $sample = 5, then 1440/5 or 288 values are plotted
+try changing this number and see the effect on the density of graph
 */
-$arr2d_1=extract_samples_from_assArray($ass_array_padded, 5); //take every 5th value
-
+$sample=5;
+$arr2d_1=extract_samples_from_assArray($ass_array_padded, $sample); //take every 5th value
 
 /*
 * first value of each array will be displayed as X-axis marking. This function keeps only 24 values which denote the start of each hour of the day.

@@ -1,44 +1,29 @@
 <?php
-/*
-* Project: Smart Water Tank
-* Created by: Jitesh Saini
-*/
 
-error_reporting(-1);
+//change the time zone as per your country
 date_default_timezone_set("Asia/Kolkata");
 
-//----------database access----------------------------
-include_once '../util/db_query.php';
-include_once 'db_params_wt.php';
-//-----------------------------------------------------
+include_once 'util.php';
 
-
-echo"Water level Logging<br>";
-
-$val=$_GET["level"];
-$passcode=$_GET["passcode"];
-
-if ($passcode!="xyz"){
-    echo"passcode does not match<br>";
-    exit();
-}
+$val=$_GET["dist"];
 
 //$val="10";
 insert_in_db($val);
 
 function insert_in_db($val){   
-   echo"val=$val<br>";
+   echo"<p>Inserting value <b>$val</b> in database</p>";
    
     $connection=create_db_connection();
     
     $t=time();
     $date_time= date('Y-m-d H:i:s', $t); 
-    echo "date_time=$date_time<br>";
+    
+    echo "<p>$date_time</p>";
 
     $sql="INSERT INTO `level_log`(`level`, `timestamp`, `date_time`)
                       VALUES ('$val','$t', '$date_time')";
    
-    $result = get_results($connection,$sql);
+    $result = mysqli_query($connection,$sql);
     
          if ( !$result ) {
             die(mysql_error()."\n".$sql);
@@ -47,7 +32,7 @@ function insert_in_db($val){
          }
     
         if ( $result ) {
-            echo" successfully inserted<br> ";
+            echo" <p>successfully inserted >>>> </p> ";
             //return 1;
       }
  

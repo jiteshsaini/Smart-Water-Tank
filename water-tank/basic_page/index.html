@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+<script type="text/javascript" src='jquery.min.js'></script>
+
+<script>
+	function data_request_timer(){
+		window.setInterval(get_data, 2000); //timer for running get_data() function every 2 seconds 
+	}
+
+	function get_data(){
+		console.log("fetching data from server");
+
+		$.get("read_data1.php", 
+		function(data, status){
+	    	document.getElementById("info").innerHTML = data;
+	  	});
+
+	}
+
+</script>
+
+</head>
+
+<body onload="data_request_timer()">
+
+<!--  This is where the data is displayed -->
+<div style='border:0px solid blue; padding:0%;'>
+    <p id='info'></p>
+</div>
+
+
+<!--  Dummy value insertion link -->
+<button>
+	<a style='text-decoration:none;font-size:12px' href='../insert_data.php?dist=65' target='_blank'>Insert dummy value</a>
+</button>
+
+</body>
+</html>

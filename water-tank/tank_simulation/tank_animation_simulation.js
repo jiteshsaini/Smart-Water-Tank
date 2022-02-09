@@ -1,5 +1,6 @@
 FusionCharts.ready(function(){
-			var chartObj = new FusionCharts({
+   
+var chartObj = new FusionCharts({
     type: 'cylinder',
     dataFormat: 'json',
     renderAt: 'chart-container',
@@ -11,23 +12,23 @@ FusionCharts.ready(function(){
             "caption": "",
             "subcaption": "",
             "lowerLimit": "0",
-            "upperLimit": "800",
+            "upperLimit": "70",
             "lowerLimitDisplay": "Empty",
             "upperLimitDisplay": "Full",
-            "numberSuffix": " ltrs",
+            "numberSuffix": "",
             "showValue": "1",
             "chartBottomMargin": "45",
             "showValue": "0",
-			"dataStreamUrl": "/web_host/watertank/read_data.php?widget=tank_animation",
+			"dataStreamUrl": "read_data.php?widget=tank_animation",
 			"refreshInterval": "1",
 			"refreshInstantly": "1",
-			"cylFillColor": "#35d1fd",
+			"cylFillColor": "#fff25e",
 			"cyloriginx": "125",
 			"cyloriginy": "270",
 			"cylradius": "120",
 			"cylheight": "250"
         },
-        "value": "700",
+        "value": "70",
         "annotations": {
             "origw": "400",
             "origh": "290",
@@ -41,7 +42,7 @@ FusionCharts.ready(function(){
                     "y": "$chartEndY-40",
                     "tox": "$canvasCenterX +55",
                     "toy": "$chartEndY-80",
-                    "fillcolor": "#35d1fd"
+                    "fillcolor": "#fff25e"
                 }, {
                     "id": "rangeText",
                     "type": "Text",
@@ -72,10 +73,10 @@ FusionCharts.ready(function(){
         "realTimeUpdateComplete": function(evt, arg) {
             var annotations = evt.sender.annotations,
                 dataVal = evt.sender.getData(),
-                colorVal = (dataVal >= 600) ? "#6caa03" : ((dataVal <= 300) ? "#e44b02" : "#f8bd1b");
+                colorVal = (dataVal >= 40) ? "#6caa03" : ((dataVal <= 20) ? "#e44b02" : "#f8bd1b");
             //Updating value
             annotations && annotations.update('rangeText', {
-                "text": dataVal + " ltrs"
+                "text": dataVal + ""
             });
             //Changing background color as per value
             annotations && annotations.update('rangeBg', {
