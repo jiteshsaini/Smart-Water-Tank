@@ -66,12 +66,11 @@ def get_distance():
 
 def sendData_to_remoteServer(dist):
 	
-	#url_remote="https://helloworld.co.in/demo/water-tank/insert_data.php?dist=" + str(dist)
 	url_remote="http://192.168.1.5/water-tank/insert_data.php?dist=" + str(dist)
 	cmd="curl -s " + url_remote
 	result=os.popen(cmd).read()
 	print (cmd)
-	print (result)
+	
 		
 	
 def low_level_warning(dist):
@@ -88,7 +87,6 @@ def low_level_warning(dist):
 def main():
 	
 	distance=get_distance()
-	distance=69.7
 	
 	print ("distance: ", distance)
 	sendData_to_remoteServer(distance)
