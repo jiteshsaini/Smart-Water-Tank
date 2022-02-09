@@ -8,10 +8,10 @@ $db_pwd='';
 $db_name='water_level';
 
 
-//-------------------------------
+//------Tank Dimensions-------------------------
 global $dia, $height;
-$dia=104; //cm
-$height=116; //cm (height of sensor)
+$dia=104; //cm (Diameter of tank)
+$height=116; //cm (height of tank)
 
 
 //---------------utility functions-------------------------------------------------------
@@ -25,7 +25,6 @@ function calculate_volume($dia,$water_level){
 	return round($vol_litres,1);
 }
 
-//read_data.php
 function time_ago($timestamp) {
 	   
 	   $strTime = array("second", "minute", "hour", "day", "month", "year");
@@ -42,10 +41,6 @@ function time_ago($timestamp) {
 			return $diff . " " . $strTime[$i] . "(s) ago ";
 	   }
 	}
-
-
-//===========================================================
-
 
 function fetch_arr($result){
 	$row = @mysqli_fetch_array($result);
@@ -68,7 +63,7 @@ function close_db_connection($connection){
 }
 
 
-/*r eturns an 2-dimentional array of all the rows selected by the query */
+/*returns an 2-dimentional array of all the rows selected by the query */
 function db_select_all($connection,$sql){
 	
 	$results = mysqli_query($connection,$sql);
@@ -92,11 +87,10 @@ function db_select_all($connection,$sql){
 }
 
 function db_select_row($connection,$sql){
-	//$connection=create_db_connection();
-
+	
 	$results = mysqli_query($connection,$sql);
 
-	$row_count=mysqli_num_rows($results);//echo"cnt: $row_count<br>";
+	$row_count=mysqli_num_rows($results);
 
 	if($row_count==1){
 		$row = fetch_arr($results);
@@ -105,8 +99,6 @@ function db_select_row($connection,$sql){
 	else{
 		echo"<h3 style='color:red'>$sql <br> Query returns more than one row or zero rows</h3><br>";
 	}	
-	
-	//close_db_connection($connection);
 	
 	return @$array;
 }
