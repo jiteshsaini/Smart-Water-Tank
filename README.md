@@ -20,13 +20,13 @@ As shown in the animation below, an ultrasonic sensor is fitted on top of the wa
 
 **water-tank**
 1. This directory contains the code of Dashboard (Web GUI). It is required to be placed inside the public directory ("htdocs" or "www") of your webserver.
-You can install a Webserver such as XAMPP on your PC or Laptop and place 'web_host' directory in 'htdocs' folder.<br>
+You can install a Webserver such as XAMPP on your PC or Laptop and place 'water-tank' directory in 'htdocs' folder.<br>
 
 2. Create a database with name 'water_level' using phpmyadmin utility and import the "water_level.sql" database file (present in 'water-tank' directory). <br>
 
-3. Change the database connection settings in 'util.php' file as per your environment. 
+3. Change the database connection settings in 'util.php' file as per your environment.<br> 
 
-5. Open browser and go to this URL "http://127.0.01/water-tank". You should see the dashboard<br>
+4. Open browser and go to this URL "http://127.0.01/water-tank". You should see the dashboard<br>
 
 **raspberry-pi**
 
