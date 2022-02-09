@@ -1,6 +1,7 @@
 #!/bin/bash
 
-FILE_NAME="sample.py"
+# specify the file name that you want to run through cron automatically every one minute
+FILE_NAME="sensor.py"
 
 crontab -u $USER -l| grep $PWD/$FILE_NAME > /dev/null
 if [ $? -eq 0 ]

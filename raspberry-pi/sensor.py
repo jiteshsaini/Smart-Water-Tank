@@ -1,7 +1,7 @@
 #Project: Smart Water Tank
 #Created by: Jitesh Saini
 
-#this script should be executed every minute through CRON settings of Raspberry Pi
+#you can use the setup_cron.sh bash script to install a cron job to automatically execute this file every minute.
 
 import RPi.GPIO as GPIO
 import time,os
@@ -66,7 +66,7 @@ def get_distance():
 
 def sendData_to_remoteServer(dist):
 	
-	url_remote="http://192.168.1.5/water-tank/insert_data.php?dist=" + str(dist)
+	url_remote="http://192.168.1.2/water-tank/insert_data.php?dist=" + str(dist)
 	cmd="curl -s " + url_remote
 	result=os.popen(cmd).read()
 	print (cmd)
