@@ -13,7 +13,7 @@ This is an IOT project implemented using Raspberry Pi and custom Web Application
 As shown in the animation below, an ultrasonic sensor is fitted on top of the water tank. The sensor is connected to Raspberry Pi, which measures water level in the tank every minute. The water level reading is fed to a remote database. A Web Application running in the remote host makes use of this data to update the water level animation and the thin bar line graph.
 
 <p align="center">
-   <img src="https://helloworld.co.in/custom_php/img/watertank_overview.gif">
+   <img src="https://helloworld.co.in/main/images/watertank_overview.gif">
 </p>
 
 ## How to use the code
