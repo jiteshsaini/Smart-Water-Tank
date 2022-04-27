@@ -27,7 +27,6 @@ time.sleep(1) #settling time
 
 def get_distance():
 	dist_add = 0
-	k=0
 	for x in range(20):
 		try:
 			GPIO.output(TRIG, True)
@@ -55,17 +54,13 @@ def get_distance():
 		
 			pass
 	
-	
-	print ("x: ", x+1)
-	print ("k: ", k)
-
-	avg_dist=dist_add/(x+1 -k)
+	avg_dist=dist_add/20
 	dist=round(avg_dist,3)
 	#print ("dist: ", dist)
 	return dist
 
 def sendData_to_remoteServer(dist):
-	
+	#replace 192.168.1.2 with the IP address of your webserver
 	url_remote="http://192.168.1.2/water-tank/insert_data.php?dist=" + str(dist)
 	cmd="curl -s " + url_remote
 	result=os.popen(cmd).read()
