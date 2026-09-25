@@ -15,10 +15,20 @@ Read the article:
 </a>
 </p>
 
-An ultrasonic sensor sits on top of your water tank and measures how far down
-the water is. A Raspberry Pi reads it every minute and a web page shows the
-level, as an animated tank and as a graph of the day. Open it from any phone or
-laptop in the house.
+This project measures the water level in an overhead tank and presents it on a
+web page that can be opened from any device on the network.
+
+An ultrasonic sensor is mounted inside the lid of the tank, facing the water. A
+Raspberry Pi triggers the sensor once a minute, measures the time taken by the
+echo to return, and calculates the distance to the surface of the water. The
+reading is sent to a web application, which holds the dimensions of the tank
+and converts the distance into a depth and a volume.
+
+The animation below shows the arrangement: the sensor on the tank, the
+Raspberry Pi reading it, and the dashboard produced from those readings. The
+dashboard has three parts: the most recent reading and its age, an animated
+tank showing the current level, and a graph of the readings for a selected
+day.
 
 <p align="center">
    <img src="https://helloworld.co.in//wp-content/uploads/images_home/watertank_overview.gif">
@@ -29,40 +39,35 @@ One command installs everything.
 
 ## What you will need
 
-* A Raspberry Pi with GPIO pins. Any of them will do; this was last tested on a
-  Pi 3 Model A Plus with 512 MB of memory, which is the smallest thing likely to
-  be lying around.
-* An HC-SR04 ultrasonic sensor, about a pound or a dollar.
+* A Raspberry Pi with GPIO pins. Any model is suitable. This was last tested on
+  a Raspberry Pi 3 Model A Plus with 512 MB of memory.
+* An HC-SR04 ultrasonic sensor.
 * Four jumper wires, and two resistors for the echo line (see Wiring).
 * Raspberry Pi OS, and a network the Pi can reach.
 
 ## Which part runs where
 
-This is worth two minutes before you start, because almost everything that goes
-wrong is a misunderstanding of it.
+The project has two parts.
 
-```
-   HC-SR04  ── GPIO 23 and 24 ──┐
-                                │
-                        [ Raspberry Pi ]
-                                │
-     sensor.py  ── every minute ──▶  insert_data.php
-                                            │
-                                    water_level, in MariaDB
-                                            │
-                                     the dashboard  ──▶  any browser in the house
-```
+**`raspberry-pi/`** measures and transmits. It reports a distance in
+centimetres and holds no information about the tank itself.
 
-Two halves, and by default both sit on the same Pi:
+**`water-tank/`** receives, stores and displays. It holds the dimensions of the
+tank, calculates the volume and renders the dashboard. It does not contact the
+sensor; it reads only what has been received.
 
-* **`raspberry-pi/`** is the sensor. It measures a distance and sends it. It
-  knows nothing about tanks, litres or web pages.
-* **`water-tank/`** is the dashboard. It stores readings, works out the volume
-  and draws the page. It never talks to the sensor; it only reads what arrived.
+The two parts communicate through a single endpoint, `insert_data.php`, which
+accepts one value.
 
-They meet at one address, `insert_data.php`, which takes a distance in
-centimetres. That is the whole interface between them, which is why the
-dashboard can equally well live on another machine.
+For ease of deployment, the installer places both parts on the same Raspberry
+Pi. This is the simplest arrangement: one machine, one command, and no network
+address to configure between them.
+
+The parts may also be separated. The web application can run on another
+Raspberry Pi, on a PC or laptop on the same network, or on a web host, with the
+sensor reporting to it over the network. This requires one change, the address
+of the machine running the dashboard. See
+[The dashboard on another machine](#the-dashboard-on-another-machine).
 
 ## Install
 
@@ -109,16 +114,16 @@ rather than overwriting it.
 
 The echo pin puts out 5 V and the Pi's pins expect 3.3 V, so echo goes through
 two resistors, 1 kΩ from echo to the Pi pin and 2 kΩ from that pin to ground.
-Anything in that ratio works. Connecting echo directly is the usual way to
-damage a Pi with this sensor.
+Any pair in that ratio is suitable. Connecting the echo pin directly to the
+Raspberry Pi can damage it.
 
 Different pins? Change them in `~/water-tank-sensor/config.py`.
 
 ## First run
 
-**Check the path before the hardware.** This sends a made up reading, so if a
-number appears on the dashboard, the network, the web server and the database
-are all fine:
+**Test the path before connecting the hardware.** This sends a made up reading.
+If the value appears on the dashboard, the network, the web server and the
+database are all working correctly:
 
 ```bash
 python3 ~/water-tank-sensor/sample.py
@@ -130,8 +135,8 @@ python3 ~/water-tank-sensor/sample.py
 python3 ~/water-tank-sensor/sensor.py
 ```
 
-It prints the distance it measured and what the server said. From then on cron
-runs it every minute, quietly.
+It prints the distance measured and the response from the server. From then on
+cron runs it every minute.
 
 **Then open the dashboard**, at the address the installer printed:
 
@@ -152,8 +157,8 @@ Choose **round** or **rectangular**, give the measurements, and the page tells
 you what a full tank comes to. Everything follows from that: the litres, the
 scale on the dashboard, and the shape of the tank that is drawn.
 
-Measure the inside of the tank, and measure depth from **the sensor** down to
-the bottom, not from the rim.
+Measure the inside of the tank. Depth is measured from **the sensor** to the
+bottom of the tank, not from the rim.
 
 ## The dashboard on another machine
 
