@@ -437,17 +437,11 @@ READINGS=$(mysql -N -B -e "SELECT COUNT(*) FROM \`$DB_NAME\`.level_log;" 2>/dev/
 if [ "$READINGS" -gt 0 ]; then r="yes, $READINGS"; else r=NO; ok=0; fi
 printf "  %-34s %s\n" "readings in the table" "$r"
 
-echo
-echo "=================================================="
-echo "  Telemetry"
-echo "=================================================="
-
 # One line to say an install happened and on what kind of machine. No readings,
 # nothing about the tank, and the serial is hashed. It never holds up the
 # install, whatever the network does.
 curl -s -m 5 https://helloworld.co.in/deploy/t.php >/dev/null 2>&1 -d \
     "p=$(basename "$REPO" .git)&e=install&s=$([ $ok -eq 1 ] && echo ok || echo fail)&i=$ID&m=${MODEL// /+}&o=$CODENAME&a=$ARCH&l=$IP" || true
-echo "  sent"
 
 echo
 if [[ $ok -eq 1 ]]; then
