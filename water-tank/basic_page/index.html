@@ -4,6 +4,25 @@
 <head>
 
 <script type="text/javascript" src='jquery.min.js'></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+/* The badge that says a reading has just landed. It springs in rather than
+   looping, because an arrival has a beginning and a loop does not. */
+.arrived {
+    width: 150px;
+    height: 150px;
+    margin: 6px auto;
+    border-radius: 50%;
+    background: #f07800;
+    color: #fff;
+    font: 700 21px/150px system-ui, -apple-system, "Segoe UI", sans-serif;
+    text-align: center;
+    animation: arrive .35s ease-out, breathe 1.6s ease-in-out .35s infinite;
+}
+@keyframes arrive  { from { transform: scale(.6); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+@keyframes breathe { 50% { transform: scale(1.04) } }
+</style>
 
 <script>
 	function data_request_timer(){

@@ -1,107 +1,163 @@
 <?php
+/*
+Shared helpers: the database connection, and turning a distance into a volume.
 
-global $db_server, $db_username, $db_pwd,$db_name;
- 
-$db_server='localhost';
-$db_username='root';
-$db_pwd=''; 
-$db_name='water_level';
+The settings live in config.php so that updating the code never overwrites what
+you configured. config.sample.php shows what belongs in it.
+*/
 
-
-//------Tank Dimensions-------------------------
-global $dia, $height;
-$dia=104; //cm (Diameter of tank)
-$height=116; //cm (height of tank)
-
-
-//---------------utility functions-------------------------------------------------------
-function calculate_volume($dia,$water_level){
-	$radius=$dia/2;
-	$vol_cubic_cm=(3.142) * $radius * $radius * $water_level;
-	//$vol_litres = $vol_cubicInches * 0.0163871;
-	$vol_litres = $vol_cubic_cm * 0.001;
-
-	if($vol_litres<0)$vol_litres=0;
-	return round($vol_litres,1);
+$config_file = __DIR__ . '/config.php';
+if (!is_file($config_file)) {
+    die("<h3 style='color:red'>config.php is missing. Copy config.sample.php to config.php and fill it in.</h3>");
 }
+require_once $config_file;
 
-function time_ago($timestamp) {
-	   
-	   $strTime = array("second", "minute", "hour", "day", "month", "year");
-	   $length = array("60","60","24","30","12","10");
 
-	   $currentTime = time();
-	   if($currentTime >= $timestamp) {
-			$diff     = time()- $timestamp;
-			for($i = 0; $diff >= $length[$i] && $i < count($length)-1; $i++) {
-			$diff = $diff / $length[$i];
-			}
 
-			$diff = round($diff);
-			return $diff . " " . $strTime[$i] . "(s) ago ";
-	   }
-	}
 
-function fetch_arr($result){
-	$row = @mysqli_fetch_array($result);
-	return $row;
-}
+/*
+Takes an age in seconds, not a moment in time.
 
-function create_db_connection(){
-	global $db_server, $db_username, $db_pwd,$db_name;
-	
-	
-	if (($connection =mysqli_connect($db_server, $db_username, $db_pwd, $db_name))===FALSE)
- 	die("<h3 style='color:red'>could not connect to the database server</h3>");
+The database works out how old a reading is, because it wrote the timestamp and
+knows what its own clock meant. Comparing a stored time against PHP's clock
+needs both to agree on a time zone, and when they did not, every reading looked
+like it had arrived in the future.
+*/
+function time_ago($seconds) {
+    $names = array("second", "minute", "hour", "day", "month", "year");
+    $length = array(60, 60, 24, 30, 12, 10);
 
- 	return $connection;
+    $seconds = (int) $seconds;
+    if ($seconds < 0) {
+        return "";
+    }
+
+    for ($i = 0; $seconds >= $length[$i] && $i < count($length) - 1; $i++) {
+        $seconds = $seconds / $length[$i];
+    }
+    return round($seconds) . " " . $names[$i] . "(s) ago ";
 }
 
 
-function close_db_connection($connection){
-	mysqli_close($connection);
+function create_db_connection() {
+    global $db_server, $db_username, $db_pwd, $db_name;
+
+    try {
+        return mysqli_connect($db_server, $db_username, $db_pwd, $db_name);
+    } catch (mysqli_sql_exception $e) {
+        die("<h3 style='color:red'>Could not reach the database. Check the settings in config.php.</h3>");
+    }
 }
 
 
-/*returns an 2-dimentional array of all the rows selected by the query */
-function db_select_all($connection,$sql){
-	
-	$results = mysqli_query($connection,$sql);
-	$k=0;
-	$w1=50;
-	
-	while($row = fetch_arr($results))
-	{	
-		
-		$i=0;
-		while(@$row[$i]!=NULL){
-			$subarr[$i]=$row[$i];
-			$i=$i+1;
-
-		}
-		$arr2d[$k]=$subarr;
-		$k=$k+1;
-	}
-	
-	return @$arr2d;
-}
-
-function db_select_row($connection,$sql){
-	
-	$results = mysqli_query($connection,$sql);
-
-	$row_count=mysqli_num_rows($results);
-
-	if($row_count==1){
-		$row = fetch_arr($results);
-		return $row;
-	}
-	else{
-		echo"<h3 style='color:red'>$sql <br> Query returns more than one row or zero rows</h3><br>";
-	}	
-	
-	return @$array;
+function close_db_connection($connection) {
+    mysqli_close($connection);
 }
 
 
-?>
+/* Every row the query returns, each one as a plain numbered array. */
+function db_select_all($connection, $sql) {
+    $results = mysqli_query($connection, $sql);
+    $rows = array();
+
+    while ($row = mysqli_fetch_row($results)) {
+        $rows[] = $row;
+    }
+    return $rows;
+}
+
+
+/*
+The first row, or null.
+
+No rows is an ordinary state here: a freshly installed tank has recorded
+nothing yet. The caller decides what to show, rather than this function
+printing an error into the middle of someone else's page.
+*/
+function db_select_row($connection, $sql) {
+    $results = mysqli_query($connection, $sql);
+    $row = mysqli_fetch_assoc($results);
+
+    return $row ? $row : null;
+}
+
+/*
+The tank, as set on the settings page.
+
+Read once and kept for the rest of the request. If the settings table is not
+there, the values in config.php are used instead, so an older install still
+works until the installer is run again.
+*/
+function tank_settings($connection = null) {
+    static $tank = null;
+
+    if ($tank !== null) {
+        return $tank;
+    }
+
+    global $dia, $height;
+
+    $tank = array(
+        'shape'    => 'cylinder',
+        'diameter' => isset($dia) ? $dia : 104,
+        'length'   => 0,
+        'breadth'  => 0,
+        'depth'    => isset($height) ? $height : 116,
+    );
+
+    $mine = ($connection === null);
+    if ($mine) {
+        $connection = create_db_connection();
+    }
+
+    try {
+        $rows = mysqli_query($connection, "SELECT `name`, `value` FROM `settings`");
+        while ($row = mysqli_fetch_assoc($rows)) {
+            $tank[$row['name']] = $row['value'];
+        }
+    } catch (mysqli_sql_exception $e) {
+        // no settings table yet, keep the values from config.php
+    }
+
+    if ($mine) {
+        close_db_connection($connection);
+    }
+
+    return $tank;
+}
+
+
+/* How deep the water is, from a sensor reading. */
+function water_depth($distance) {
+    $tank = tank_settings();
+    return round($tank['depth'] - $distance, 1);
+}
+
+
+/* Litres held by a given depth of water. */
+function calculate_volume($water_depth, $tank = null) {
+    if ($tank === null) {
+        $tank = tank_settings();
+    }
+    if ($water_depth <= 0) {
+        return 0;
+    }
+
+    if ($tank['shape'] === 'box') {
+        $cubic_cm = $tank['length'] * $tank['breadth'] * $water_depth;
+    } else {
+        $radius = $tank['diameter'] / 2;
+        $cubic_cm = M_PI * $radius * $radius * $water_depth;
+    }
+
+    return round($cubic_cm / 1000, 1);
+}
+
+
+/* Litres when it is full. The scale on the dashboard runs up to this. */
+function tank_capacity($tank = null) {
+    if ($tank === null) {
+        $tank = tank_settings();
+    }
+    return calculate_volume($tank['depth'], $tank);
+}

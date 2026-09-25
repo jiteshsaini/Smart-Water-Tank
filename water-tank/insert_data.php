@@ -1,44 +1,44 @@
 <?php
+/*
+The address the Raspberry Pi sends a reading to, once a minute:
 
-//change the time zone as per your country
-date_default_timezone_set("Asia/Kolkata");
+    http://<this server>/water-tank/insert_data.php?dist=46.163
 
-include_once 'util.php';
+dist is what the ultrasonic sensor measured: the distance from the sensor down
+to the surface of the water, in centimetres. The dashboard works out the depth
+and the volume from it, using the tank size in config.php.
+*/
 
-$val=$_GET["dist"];
+date_default_timezone_set("Asia/Kolkata");   // set your own time zone here
 
-//$val="10";
-insert_in_db($val);
+require_once __DIR__ . '/util.php';
 
-function insert_in_db($val){   
-   echo"<p>Inserting value <b>$val</b> in database</p>";
-   
-    $connection=create_db_connection();
-    
-    $t=time();
-    $date_time= date('Y-m-d H:i:s', $t); 
-    
-    echo "<p>$date_time</p>";
+$dist = $_GET['dist'] ?? '';
 
-    $sql="INSERT INTO `level_log`(`level`, `timestamp`, `date_time`)
-                      VALUES ('$val','$t', '$date_time')";
-   
-    $result = mysqli_query($connection,$sql);
-    
-         if ( !$result ) {
-            die(mysql_error()."\n".$sql);
-            echo" !!!<br> ";
-            //return 0;
-         }
-    
-        if ( $result ) {
-            echo" <p>successfully inserted >>>> </p> ";
-            //return 1;
-      }
- 
-    close_db_connection($connection);
-    
+// The reading arrives over the network, so it is checked before it goes
+// anywhere near the database. A value taken straight from a URL and pasted
+// into an SQL string is how a project like this gets broken into.
+if (!is_numeric($dist)) {
+    http_response_code(400);
+    exit("dist must be a number, for example 46.163\n");
 }
 
-?>
+$dist = round((float) $dist, 3);
 
+$connection = create_db_connection();
+
+// Prepared, so the reading stays a value and can never become part of the
+// statement, whatever it contains.
+$statement = mysqli_prepare($connection, "INSERT INTO `level_log` (`level`, `date_time`) VALUES (?, NOW())");
+mysqli_stmt_bind_param($statement, "d", $dist);
+$stored = mysqli_stmt_execute($statement);
+mysqli_stmt_close($statement);
+
+close_db_connection($connection);
+
+if (!$stored) {
+    http_response_code(500);
+    exit("the reading could not be stored\n");
+}
+
+echo "stored " . $dist . " cm at " . date('Y-m-d H:i:s') . "\n";

@@ -1,0 +1,3 @@
+# Written by the installer, and holds this machine's database password and the
+# measurements of its tank. Never belongs in the repository.
+config.php

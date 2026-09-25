@@ -2,16 +2,36 @@
 <html lang="en">
 
 <head>
+<meta charset="utf-8">
 <title>Smart Water Tank</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-.outer{
-    border:1px solid grey;
-    margin:0%;
-    width:100%;
-    float:left;
-}    
+body { margin: 0; }
 
+/* Side by side on a screen with room, stacked on a phone. The panels are
+   frames, so each one needs a height of its own; percentages would collapse. */
+.outer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+}
+.panel { flex: 0 1 auto; }
+.panel iframe { border: 1px solid #d5d9dc; display: block; }
+
+.reading { width: 230px; }
+.tank    { width: 370px; }
+.graph   { width: 740px; max-width: 100%; }
+
+.graph iframe { width: 100%; }
+
+@media (max-width: 760px) {
+    .outer { padding: 6px; }
+    .panel, .reading, .tank { width: 100%; max-width: 380px; }
+    .panel iframe { width: 100%; }
+}
 </style>
 
 </head>
@@ -21,28 +41,29 @@
 
 <div align='center'> 
     <h3>Real Time Tank Level Monitoring</h3> 
-    <p style='font-size:12px;color:grey'>The dashboard displays real time water level in a tank. Tank level is updated every minute on arrival of sensor data from Raspberry Pi. <a href='tank_simulation' target='_blank'>Simulation</a></p>
+    <p style='font-size:12px;color:grey'>The dashboard displays real time water level in a tank. Tank level is updated every minute on arrival of sensor data from Raspberry Pi. <a href='tank_simulation' target='_blank'>Simulation</a>
+    &nbsp;|&nbsp; <a href='settings.php'>Tank size</a></p>
 </div> 
 
-<div class='outer'> 
+<div class='outer'>
 
-     <div style='width:20%;float:left;margin-left:20%;'> 
-        <iframe height='410px' width='100%' src='basic_page/' name='iframe_a'></iframe>
-     </div> 
+    <div class='panel reading'>
+        <iframe height='410' width='230' src='basic_page/' name='iframe_a'></iframe>
+    </div>
 
-     <div style='width:30%;float:left;margin-left:5%;'> 
-         <iframe height='410px' width='100%' src='tank_animation/' name='iframe_a'></iframe>
-     </div> 
+    <div class='panel tank'>
+        <iframe height='410' width='370' src='tank_animation/' name='iframe_a'></iframe>
+    </div>
 
-</div> 
- 
+</div>
 
-<div class='outer'> 
-    <div style='width:70%;margin-left:20%;float:left'> 
-        <iframe height='420px' width='100%' src='graph/' name='iframe_a'></iframe>
-         <p style='margin:1%;color:grey;font-size:12px'>The graph shows the water level readings for a selected date. Y-axis indicates the volume of water in the tank and X-axis denotes hour of the day</p> 
-    </div> 
-</div> 
+
+<div class='outer'>
+    <div class='panel graph'>
+        <iframe height='430' src='graph/' name='iframe_a'></iframe>
+        <p style='margin:6px 2px;color:grey;font-size:12px'>The graph shows the water level readings for a selected date. Y-axis indicates the volume of water in the tank and X-axis denotes hour of the day</p>
+    </div>
+</div>
 
 
 

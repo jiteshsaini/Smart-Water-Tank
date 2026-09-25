@@ -2,10 +2,21 @@
 <html lang="en">
 
 <head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-	a{text-decoration:none;}
+    body { margin: 6px; font: 14px system-ui, -apple-system, sans-serif; }
+    a { text-decoration: none; }
+
+    /* PHPlot draws a 600 by 300 picture. On a narrow screen it is scaled to
+       fit rather than redrawn, so it stays readable without the page having to
+       tell the graph how wide the phone is. */
+    iframe.plot { width: 100%; max-width: 620px; height: 320px; border: 1px solid lightgray; }
+
+    table { border-collapse: collapse; }
+    td { border: 1px solid #ccc; padding: 5px 7px; font-size: 13px; }
 </style>
-	
+
 </head>
 
 <body>
@@ -16,14 +27,14 @@
 ini_set('display_errors', '1');
 
 
-$date=@$_GET['date'];
-if($date==""){
-    $date=date('Y-m-d', time());
+$date = $_GET['date'] ?? '';
+if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $date)) {
+    $date = date('Y-m-d');
 }
 
 /* --------- Render the graph ----------------------*/
 $src='graph.php?date='.$date;
-echo"<iframe height='320px' width='100%' src='$src' name='iframe_b' style='border:1px solid lightgray;'></iframe>";
+echo"<iframe class='plot' src='$src' name='iframe_b'></iframe>";
     
 
 /* -------- show the last 7 dates as hyperlinks ------------- */
@@ -37,13 +48,16 @@ for($i=0;$i<7;$i++){
         
     $link="<a href='index.php?date=$dt'>$dt1</a>";
         
-    echo"<td style='border:1px solid grey;padding:5px;'>$link</td>";
+    echo"<td>$link</td>";
 }
 echo"</tr></table>";
 
-echo"<p style='float:right'>Sample data: <button><a href='index.php?date=2020-07-26'>26 Jul 2020</a></button>";    
-
-//27juj21,30jul 
+/*
+One day of real readings ships with the project, dated 1 Sep 2026, so there is
+always a complete day to look at. Put it beside today and you can see the
+difference between the sample and what your own sensor is recording.
+*/
+echo"<p style='float:right'>Sample data: <button><a href='index.php?date=2026-09-01'>01 Sep 26</a></button>";
 ?>
 
 </body>
