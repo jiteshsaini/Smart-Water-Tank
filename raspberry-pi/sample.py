@@ -1,23 +1,32 @@
-#Project: Smart Water Tank
-#Created by: Jitesh Saini
+"""
+Sends a made up reading, to check the Pi can reach the dashboard.
 
-import random, os
+    python3 sample.py
 
-def measure_distance():
-	d=random.randrange(5, 100)
-	return d
+Use this before wiring the sensor. If a number appears on the dashboard, the
+network, the web server and the database are all working, and anything that
+goes wrong afterwards is the sensor or its wiring.
+"""
 
-def sendData_to_remoteServer(dist):
-	url_remote="http://192.168.1.2/water-tank/insert_data.php?dist=" + str(dist)
-	cmd="curl -s " + url_remote
-	result=os.popen(cmd).read()
-	print (cmd)
-	
+import random
+import sys
+import urllib.error
+
+import sensor
+
+
 def main():
-	
-	dist = measure_distance()
-	sendData_to_remoteServer(dist)
-	
-	
-if __name__ == '__main__':
-    main()
+    distance = round(random.uniform(20, 100), 3)
+    print("pretending the sensor read %s cm" % distance)
+
+    try:
+        print(sensor.send(distance))
+    except (urllib.error.URLError, OSError) as problem:
+        print("could not reach %s: %s" % (sensor.config.SERVER_URL, problem), file=sys.stderr)
+        return 1
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
