@@ -1,31 +1,24 @@
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-	<title>Simulation</title>
-	<script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/fusioncharts.js"></script>
-    <script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/themes/fusioncharts.theme.fusion.js"></script>
-  
-	<script type="text/javascript" src="tank_animation_simulation.js"></script>
-	<script type="text/javascript" src='../basic_page/jquery.min.js'></script>
-  
-    
-    <script>
-    	
-    	function data_request_timer(delay){
-			window.setInterval(get_data, delay); //timer for initiating ajax request 
+<meta charset="utf-8">
+<title>Simulation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		}
+<script type="text/javascript" src='../basic_page/jquery.min.js'></script>
 
-		function get_data(){
-			console.log("fetching data from server");
+<script>
+    function data_request_timer(delay){
+        window.setInterval(get_data, delay); //timer for initiating ajax request
+    }
 
-			$.get("read_data.php?widget=info", 
-			function(data, status){
-		    	document.getElementById("info").innerHTML = data;
-		  	});
-
-		}
-
-    </script>
+    function get_data(){
+        $.get("read_data.php?widget=info",
+        function(data, status){
+            document.getElementById("info").innerHTML = data;
+        });
+    }
+</script>
 
 </head>
 <body onload="data_request_timer(1000)">
@@ -34,16 +27,29 @@
     <div style='margin-top:30px'>
          <p id='info'></p>
     </div>
-    
+
     <div style='margin-top:30px'>
-	    <div id='chart-container'>Reload Page if you don't see animation</div>
+        <div id='chart-container' style='color:grey;font:14px sans-serif;padding:20px'>Drawing the tank...</div>
     </div>
 
     <div style='margin-top:30px; width:50%;'>
-	    <p>In this simulation, the server time seconds info is fed to the tank animation. See how the parameters are tweaked in the tank_animation_simulation.js file to change the appearance and behaviour of the tank</p>
+        <p>The seconds from the server clock are fed to the tank here, so it fills
+        over a minute and starts again. It is the same tank the dashboard uses, and
+        the few lines at the bottom of this page are all it takes to point it at a
+        different reading.</p>
     </div>
 </div>
 
+<script src="https://helloworld.co.in/demo/widgets/tank.js?v=7"></script>
+<script>
+    HWTank.render({
+        container: "chart-container",
+        dataUrl:   "read_data.php?widget=tank_animation",   // answers with: &value=37
+        full:      60,                                      // seconds in a minute
+        units:     "sec",                                   // not litres, this once
+        refresh:   1                                        // this one really does change every second
+    });
+</script>
 
 </body>
 </html>

@@ -1,28 +1,23 @@
 <?php
 ini_set('display_errors', '1');
 
-//----------database access----------------------------
-include_once '../util.php';
-//-----------------------------------------------------
+require_once __DIR__ . '/../util.php';
 
-$con=create_db_connection();
+$con = create_db_connection();
 
-$sql="SELECT * FROM `level_log` WHERE 1 order by `timestamp` desc limit 1";
-$row=db_select_row($con,$sql);
-//print_r($row); 	
+// The newest row is the highest id, which is the primary key. Sorting by the
+// time column instead would sort the whole table to find one row, which on a
+// tank that has been running for a year takes about half a second, every two
+// seconds, for every open browser.
+$row = db_select_row($con, "SELECT * FROM `level_log` ORDER BY `id` DESC LIMIT 1");
 
 close_db_connection($con);
 
-$x_cm=$row['level'];
+$x_cm = $row ? floatval($row['level']) : 0;
 
-global $dia, $height;
-$water_level= $height-$x_cm;
-$water_level= round($water_level,1);
+$water_level = water_depth($x_cm);
 
-$volume=calculate_volume($dia,$water_level);
+$volume = $row ? calculate_volume($water_level) : 0;
 
-$str="&value=".$volume;
-
-echo"$str";
-
-?>
+// The tank animation expects exactly this shape.
+echo "&value=" . $volume;
